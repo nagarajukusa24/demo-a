@@ -4,7 +4,7 @@
   gather_facts: yes
   vars:
     region: us-east-1
-    ami_id: ami-08bf489a05e916bbd
+    ami_id: ami-0dee22c13ea7a9a67
     instance_type: t2.micro
     key_name: nrk.pem
     security_group: sg-6e4fbcd
