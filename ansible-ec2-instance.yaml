@@ -1,13 +1,4 @@
 ---
-- name: Ensure boto3 and botocore are installed
-  hosts: localhost
-  tasks:
-    - name: Install boto3 and botocore
-      ansible.builtin.pip:
-        name:
-          - boto3
-          - botocore
-      become: yes
 - name: Check if AMI exists and create EC2 Instance
   hosts: localhost
   gather_facts: yes
