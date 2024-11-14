@@ -1,0 +1,38 @@
+---
+- name: Check if AMI exists and create EC2 Instance
+  hosts: localhost
+  gather_facts: yes
+  vars:
+    region: us-east-1
+    ami_id: ami-08bf489a05e916bbd
+    instance_type: t2.micro
+    key_name: nrk.pem
+    security_group: sg-6e4fbcd
+
+  tasks:
+    - name: Check if the specified AMI exists
+      amazon.aws.ec2_ami_info:
+        image_ids: "{{ ami_id }}"
+        region: "{{ region }}"
+      register: ami_info
+
+    - name: Fail if AMI does not exist
+      fail:
+        msg: "The specified AMI {{ ami_id }} does not exist."
+      when: ami_info.images | length == 0
+
+    - name: Launch EC2 Instance
+      amazon.aws.ec2_instance:
+        name: MyEC2Instance
+        key_name: "{{ key_name }}"
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami_id }}"
+        region: "{{ region }}"
+        security_group: "{{ security_group }}"
+        wait: yes
+      register: ec2
+
+#References:
+#  https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_ami_module.html
+#  https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_ami_info_module.html
+#  https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_instance_module.html
