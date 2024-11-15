@@ -4,33 +4,27 @@
   gather_facts: yes
   vars:
     region: us-east-1
-    ami_id: ami-0dee22c13ea7a9a67
+    ami_id: ami-0aebec83a182ea7ea
     instance_type: t2.micro
-    key_name: nrk.pem
-    security_group: sg-6e4fbcd
-
+    key_name: harsha-anna-aws-naga.pem
+    security_group: sg-025b5a777086208b9
   tasks:
-    - name: Check if the specified AMI exists
-      amazon.aws.ec2_ami_info:
-        image_ids: "{{ ami_id }}"
-        region: "{{ region }}"
-      register: ami_info
-
-    - name: Fail if AMI does not exist
-      fail:
-        msg: "The specified AMI {{ ami_id }} does not exist."
-      when: ami_info.images | length == 0
-
-    - name: Launch EC2 Instance
+    - name: start an instance with a public IP address
       amazon.aws.ec2_instance:
-        name: MyEC2Instance
-        key_name: "{{ key_name }}"
-        instance_type: "{{ instance_type }}"
-        image_id: "{{ ami_id }}"
-        region: "{{ region }}"
-        security_group: "{{ security_group }}"
-        wait: yes
+        name: "test-instance-ansible"
+#        key_name: "harsha-anna-aws-naga.pem"
+#        vpc_subnet_id: subnet-5ca1ab1e
+        instance_type: t2.micro
+        security_group: default
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: ami-012967cc5a8c9f891
+        tags:
+          Environment: Testing
       register: ec2
+    - name: Output Instance Information
+      debug:
+        var: ec2.instances
 
 #References:
 #  https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_ami_module.html
